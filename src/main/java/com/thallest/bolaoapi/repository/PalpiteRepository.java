@@ -1,15 +1,13 @@
 package com.thallest.bolaoapi.repository;
 
 import com.thallest.bolaoapi.domain.Palpite;
-import java.util.List;
+import java.util.UUID;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface PalpiteRepository extends JpaRepository<Palpite, Long> {
+public interface PalpiteRepository extends JpaRepository<Palpite, UUID> {
 
-    boolean existsByGroupIdAndMatchIdAndUserId(Long groupId, Long matchId, Long userId);
+    boolean existsByMatchIdAndUserId(UUID matchId, UUID userId);
 
-    boolean existsByGroupIdAndMatchIdAndUserIdAndIdNot(Long groupId, Long matchId, Long userId, Long id);
-
-    List<Palpite> findByGroupId(Long groupId);
+    boolean existsByMatchIdAndUserIdAndIdNot(UUID matchId, UUID userId, UUID id);
 }
 
