@@ -8,6 +8,7 @@ import com.thallest.bolaoapi.web.dto.PartidaResponse;
 import com.thallest.bolaoapi.web.exception.BusinessException;
 import com.thallest.bolaoapi.web.exception.ResourceNotFoundException;
 import java.util.List;
+import java.util.UUID;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -38,11 +39,11 @@ public class PartidaService {
     }
 
     @Transactional(readOnly = true)
-    public PartidaResponse findById(Long id) {
+    public PartidaResponse findById(UUID id) {
         return toResponse(getEntity(id));
     }
 
-    public PartidaResponse update(Long id, PartidaRequest request) {
+    public PartidaResponse update(UUID id, PartidaRequest request) {
         validateScores(request.homeScore(), request.awayScore());
 
         Partida partida = getEntity(id);
@@ -51,11 +52,11 @@ public class PartidaService {
         return toResponse(partidaRepository.save(partida));
     }
 
-    public void delete(Long id) {
+    public void delete(UUID id) {
         partidaRepository.delete(getEntity(id));
     }
 
-    public Partida getEntity(Long id) {
+    public Partida getEntity(UUID id) {
         return partidaRepository.findById(id)
             .orElseThrow(() -> new ResourceNotFoundException("Match not found: " + id));
     }
