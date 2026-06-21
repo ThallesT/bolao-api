@@ -12,20 +12,27 @@ import jakarta.persistence.Table;
 import java.time.Instant;
 import java.util.LinkedHashSet;
 import java.util.Set;
+import java.util.UUID;
 
 @Entity
 @Table(name = "users")
 public class UserEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private UUID id;
 
     @Column(nullable = false, length = 120)
     private String name;
 
     @Column(nullable = false, unique = true, length = 160)
     private String email;
+
+    @Column(length = 500)
+    private String photoUrl;
+
+    @Column(unique = true, length = 120)
+    private String googleSubject;
 
     @Column(nullable = false, updatable = false)
     private Instant createdAt;
@@ -41,11 +48,11 @@ public class UserEntity {
         createdAt = Instant.now();
     }
 
-    public Long getId() {
+    public UUID getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(UUID id) {
         this.id = id;
     }
 
@@ -63,6 +70,22 @@ public class UserEntity {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public String getPhotoUrl() {
+        return photoUrl;
+    }
+
+    public void setPhotoUrl(String photoUrl) {
+        this.photoUrl = photoUrl;
+    }
+
+    public String getGoogleSubject() {
+        return googleSubject;
+    }
+
+    public void setGoogleSubject(String googleSubject) {
+        this.googleSubject = googleSubject;
     }
 
     public Instant getCreatedAt() {
