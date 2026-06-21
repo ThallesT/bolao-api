@@ -5,6 +5,7 @@ import com.thallest.bolaoapi.web.dto.PalpiteRequest;
 import com.thallest.bolaoapi.web.dto.PalpiteResponse;
 import jakarta.validation.Valid;
 import java.util.List;
+import java.util.UUID;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -38,18 +39,18 @@ public class PalpiteController {
     }
 
     @GetMapping("/{id}")
-    public PalpiteResponse findById(@PathVariable Long id) {
+    public PalpiteResponse findById(@PathVariable UUID id) {
         return palpiteService.findById(id);
     }
 
     @PutMapping("/{id}")
-    public PalpiteResponse update(@PathVariable Long id, @Valid @RequestBody PalpiteRequest request) {
+    public PalpiteResponse update(@PathVariable UUID id, @Valid @RequestBody PalpiteRequest request) {
         return palpiteService.update(id, request);
     }
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void delete(@PathVariable Long id) {
+    public void delete(@PathVariable UUID id) {
         palpiteService.delete(id);
     }
 }
