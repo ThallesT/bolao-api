@@ -5,6 +5,7 @@ import com.thallest.bolaoapi.web.dto.CampeonatoRequest;
 import com.thallest.bolaoapi.web.dto.CampeonatoResponse;
 import jakarta.validation.Valid;
 import java.util.List;
+import java.util.UUID;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -38,18 +39,18 @@ public class CampeonatoController {
     }
 
     @GetMapping("/{id}")
-    public CampeonatoResponse findById(@PathVariable Long id) {
+    public CampeonatoResponse findById(@PathVariable UUID id) {
         return campeonatoService.findById(id);
     }
 
     @PutMapping("/{id}")
-    public CampeonatoResponse update(@PathVariable Long id, @Valid @RequestBody CampeonatoRequest request) {
+    public CampeonatoResponse update(@PathVariable UUID id, @Valid @RequestBody CampeonatoRequest request) {
         return campeonatoService.update(id, request);
     }
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void delete(@PathVariable Long id) {
+    public void delete(@PathVariable UUID id) {
         campeonatoService.delete(id);
     }
 }
