@@ -5,6 +5,7 @@ import com.thallest.bolaoapi.web.dto.PartidaRequest;
 import com.thallest.bolaoapi.web.dto.PartidaResponse;
 import jakarta.validation.Valid;
 import java.util.List;
+import java.util.UUID;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -38,18 +39,18 @@ public class PartidaController {
     }
 
     @GetMapping("/{id}")
-    public PartidaResponse findById(@PathVariable Long id) {
+    public PartidaResponse findById(@PathVariable UUID id) {
         return partidaService.findById(id);
     }
 
     @PutMapping("/{id}")
-    public PartidaResponse update(@PathVariable Long id, @Valid @RequestBody PartidaRequest request) {
+    public PartidaResponse update(@PathVariable UUID id, @Valid @RequestBody PartidaRequest request) {
         return partidaService.update(id, request);
     }
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void delete(@PathVariable Long id) {
+    public void delete(@PathVariable UUID id) {
         partidaService.delete(id);
     }
 }
