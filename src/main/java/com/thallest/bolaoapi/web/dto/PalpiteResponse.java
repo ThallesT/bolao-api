@@ -1,12 +1,13 @@
 package com.thallest.bolaoapi.web.dto;
 
 import java.time.Instant;
+import java.util.UUID;
 
 public record PalpiteResponse(
-    Long id,
-    Long groupId,
-    Long matchId,
-    Long userId,
+    UUID id,
+    UUID groupId,
+    UUID matchId,
+    UUID userId,
     Integer homeScoreGuess,
     Integer awayScoreGuess,
     Instant createdAt,
