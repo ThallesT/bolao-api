@@ -7,6 +7,7 @@ import com.thallest.bolaoapi.web.dto.CampeonatoResponse;
 import com.thallest.bolaoapi.web.exception.BusinessException;
 import com.thallest.bolaoapi.web.exception.ResourceNotFoundException;
 import java.util.List;
+import java.util.UUID;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -35,11 +36,11 @@ public class CampeonatoService {
     }
 
     @Transactional(readOnly = true)
-    public CampeonatoResponse findById(Long id) {
+    public CampeonatoResponse findById(UUID id) {
         return toResponse(getEntity(id));
     }
 
-    public CampeonatoResponse update(Long id, CampeonatoRequest request) {
+    public CampeonatoResponse update(UUID id, CampeonatoRequest request) {
         validateDates(request);
 
         Campeonato campeonato = getEntity(id);
@@ -48,11 +49,11 @@ public class CampeonatoService {
         return toResponse(campeonatoRepository.save(campeonato));
     }
 
-    public void delete(Long id) {
+    public void delete(UUID id) {
         campeonatoRepository.delete(getEntity(id));
     }
 
-    public Campeonato getEntity(Long id) {
+    public Campeonato getEntity(UUID id) {
         return campeonatoRepository.findById(id)
             .orElseThrow(() -> new ResourceNotFoundException("Championship not found: " + id));
     }
