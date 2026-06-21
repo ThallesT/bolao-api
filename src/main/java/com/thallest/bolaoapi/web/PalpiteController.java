@@ -1,12 +1,14 @@
 package com.thallest.bolaoapi.web;
 
 import com.thallest.bolaoapi.service.PalpiteService;
+import com.thallest.bolaoapi.domain.UserEntity;
 import com.thallest.bolaoapi.web.dto.PalpiteRequest;
 import com.thallest.bolaoapi.web.dto.PalpiteResponse;
 import jakarta.validation.Valid;
 import java.util.List;
 import java.util.UUID;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -29,8 +31,11 @@ public class PalpiteController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public PalpiteResponse create(@Valid @RequestBody PalpiteRequest request) {
-        return palpiteService.create(request);
+    public PalpiteResponse create(
+        @AuthenticationPrincipal UserEntity currentUser,
+        @Valid @RequestBody PalpiteRequest request
+    ) {
+        return palpiteService.create(currentUser.getId(), request);
     }
 
     @GetMapping
@@ -44,14 +49,18 @@ public class PalpiteController {
     }
 
     @PutMapping("/{id}")
-    public PalpiteResponse update(@PathVariable UUID id, @Valid @RequestBody PalpiteRequest request) {
-        return palpiteService.update(id, request);
+    public PalpiteResponse update(
+        @PathVariable UUID id,
+        @AuthenticationPrincipal UserEntity currentUser,
+        @Valid @RequestBody PalpiteRequest request
+    ) {
+        return palpiteService.update(id, currentUser.getId(), request);
     }
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void delete(@PathVariable UUID id) {
-        palpiteService.delete(id);
+    public void delete(@PathVariable UUID id, @AuthenticationPrincipal UserEntity currentUser) {
+        palpiteService.delete(id, currentUser.getId());
     }
 }
 
