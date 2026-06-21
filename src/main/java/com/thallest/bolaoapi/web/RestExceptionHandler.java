@@ -3,6 +3,7 @@ package com.thallest.bolaoapi.web;
 import com.thallest.bolaoapi.web.dto.ApiError;
 import com.thallest.bolaoapi.web.exception.BusinessException;
 import com.thallest.bolaoapi.web.exception.ResourceNotFoundException;
+import com.thallest.bolaoapi.web.exception.UnauthorizedException;
 import java.time.Instant;
 import java.util.List;
 import org.springframework.http.HttpStatus;
@@ -22,6 +23,11 @@ public class RestExceptionHandler {
     @ExceptionHandler(BusinessException.class)
     public ResponseEntity<ApiError> handleBusiness(BusinessException ex) {
         return build(HttpStatus.BAD_REQUEST, ex.getMessage());
+    }
+
+    @ExceptionHandler(UnauthorizedException.class)
+    public ResponseEntity<ApiError> handleUnauthorized(UnauthorizedException ex) {
+        return build(HttpStatus.UNAUTHORIZED, ex.getMessage());
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
