@@ -7,6 +7,7 @@ import com.thallest.bolaoapi.web.dto.UserResponse;
 import com.thallest.bolaoapi.web.exception.BusinessException;
 import com.thallest.bolaoapi.web.exception.ResourceNotFoundException;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -37,6 +38,16 @@ public class UserService {
     }
 
     @Transactional(readOnly = true)
+    public Optional<UserEntity> findByGoogleSubject(String googleSubject) {
+        return userRepository.findByGoogleSubject(googleSubject);
+    }
+
+    @Transactional(readOnly = true)
+    public Optional<UserEntity> findByEmail(String email) {
+        return userRepository.findByEmailIgnoreCase(email);
+    }
+
+    @Transactional(readOnly = true)
     public UserResponse findById(UUID id) {
         return toResponse(getEntity(id));
     }
@@ -58,6 +69,33 @@ public class UserService {
     public UserEntity getEntity(UUID id) {
         return userRepository.findById(id)
             .orElseThrow(() -> new ResourceNotFoundException("User not found: " + id));
+    }
+
+    public UserEntity resolveOrCreateFromGoogle(String googleSubject, String email, String name, String photoUrl) {
+        Optional<UserEntity> existingByGoogle = findByGoogleSubject(googleSubject);
+        if (existingByGoogle.isPresent()) {
+            UserEntity user = existingByGoogle.get();
+            user.setName(name);
+            user.setEmail(email.toLowerCase());
+            user.setPhotoUrl(photoUrl);
+            return userRepository.save(user);
+        }
+
+        Optional<UserEntity> existingByEmail = findByEmail(email);
+        if (existingByEmail.isPresent()) {
+            UserEntity user = existingByEmail.get();
+            user.setName(name);
+            user.setPhotoUrl(photoUrl);
+            user.setGoogleSubject(googleSubject);
+            return userRepository.save(user);
+        }
+
+        UserEntity user = new UserEntity();
+        user.setName(name);
+        user.setEmail(email.toLowerCase());
+        user.setPhotoUrl(photoUrl);
+        user.setGoogleSubject(googleSubject);
+        return userRepository.save(user);
     }
 
     private void validateUniqueEmail(String email, UUID currentId) {
