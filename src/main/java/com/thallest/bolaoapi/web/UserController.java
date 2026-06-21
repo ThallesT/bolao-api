@@ -5,6 +5,7 @@ import com.thallest.bolaoapi.web.dto.UserRequest;
 import com.thallest.bolaoapi.web.dto.UserResponse;
 import jakarta.validation.Valid;
 import java.util.List;
+import java.util.UUID;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -38,18 +39,18 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
-    public UserResponse findById(@PathVariable Long id) {
+    public UserResponse findById(@PathVariable UUID id) {
         return userService.findById(id);
     }
 
     @PutMapping("/{id}")
-    public UserResponse update(@PathVariable Long id, @Valid @RequestBody UserRequest request) {
+    public UserResponse update(@PathVariable UUID id, @Valid @RequestBody UserRequest request) {
         return userService.update(id, request);
     }
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void delete(@PathVariable Long id) {
+    public void delete(@PathVariable UUID id) {
         userService.delete(id);
     }
 }
