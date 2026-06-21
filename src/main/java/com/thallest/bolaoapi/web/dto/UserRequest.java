@@ -6,7 +6,9 @@ import jakarta.validation.constraints.Size;
 
 public record UserRequest(
     @NotBlank @Size(max = 120) String name,
-    @NotBlank @Email @Size(max = 160) String email
+    @NotBlank @Email @Size(max = 160) String email,
+    @Size(max = 500) String photoUrl,
+    @Size(max = 120) String googleSubject
 ) {
 }
 
