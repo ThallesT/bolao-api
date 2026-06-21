@@ -3,10 +3,11 @@ package com.thallest.bolaoapi.web.dto;
 import com.thallest.bolaoapi.domain.MatchStatus;
 import java.time.Instant;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 public record PartidaResponse(
-    Long id,
-    Long championshipId,
+    UUID id,
+    UUID championshipId,
     String homeTeam,
     String awayTeam,
     LocalDateTime matchDate,
