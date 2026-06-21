@@ -13,19 +13,20 @@ import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
 import java.time.Instant;
+import java.util.UUID;
 
 @Entity
 @Table(
     name = "guesses",
     uniqueConstraints = {
-        @UniqueConstraint(columnNames = {"group_id", "match_id", "user_id"})
+        @UniqueConstraint(columnNames = {"match_id", "user_id"})
     }
 )
 public class Palpite {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private UUID id;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "group_id", nullable = false)
@@ -63,11 +64,11 @@ public class Palpite {
         updatedAt = Instant.now();
     }
 
-    public Long getId() {
+    public UUID getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(UUID id) {
         this.id = id;
     }
 
