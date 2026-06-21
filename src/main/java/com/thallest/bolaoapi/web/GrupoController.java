@@ -3,6 +3,7 @@ package com.thallest.bolaoapi.web;
 import com.thallest.bolaoapi.service.GrupoService;
 import com.thallest.bolaoapi.web.dto.GrupoRequest;
 import com.thallest.bolaoapi.web.dto.GrupoResponse;
+import com.thallest.bolaoapi.web.dto.RankingResponse;
 import jakarta.validation.Valid;
 import java.util.List;
 import org.springframework.http.HttpStatus;
@@ -21,9 +22,14 @@ import org.springframework.web.bind.annotation.RestController;
 public class GrupoController {
 
     private final GrupoService grupoService;
+    private final com.thallest.bolaoapi.service.RankingService rankingService;
 
-    public GrupoController(GrupoService grupoService) {
+    public GrupoController(
+        GrupoService grupoService,
+        com.thallest.bolaoapi.service.RankingService rankingService
+    ) {
         this.grupoService = grupoService;
+        this.rankingService = rankingService;
     }
 
     @PostMapping
@@ -40,6 +46,11 @@ public class GrupoController {
     @GetMapping("/{id}")
     public GrupoResponse findById(@PathVariable Long id) {
         return grupoService.findById(id);
+    }
+
+    @GetMapping("/{id}/ranking")
+    public RankingResponse getRanking(@PathVariable Long id) {
+        return rankingService.getGroupRanking(id);
     }
 
     @PutMapping("/{id}")
