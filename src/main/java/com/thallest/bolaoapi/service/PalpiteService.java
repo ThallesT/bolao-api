@@ -9,7 +9,9 @@ import com.thallest.bolaoapi.web.dto.PalpiteRequest;
 import com.thallest.bolaoapi.web.dto.PalpiteResponse;
 import com.thallest.bolaoapi.web.exception.BusinessException;
 import com.thallest.bolaoapi.web.exception.ResourceNotFoundException;
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -35,7 +37,7 @@ public class PalpiteService {
     }
 
     public PalpiteResponse create(PalpiteRequest request) {
-        validateUniqueGuess(request.groupId(), request.matchId(), request.userId(), null);
+        validateUniqueGuess(request.matchId(), request.userId(), null);
 
         Palpite palpite = new Palpite();
         apply(palpite, request);
@@ -49,12 +51,12 @@ public class PalpiteService {
     }
 
     @Transactional(readOnly = true)
-    public PalpiteResponse findById(Long id) {
+    public PalpiteResponse findById(UUID id) {
         return toResponse(getEntity(id));
     }
 
-    public PalpiteResponse update(Long id, PalpiteRequest request) {
-        validateUniqueGuess(request.groupId(), request.matchId(), request.userId(), id);
+    public PalpiteResponse update(UUID id, PalpiteRequest request) {
+        validateUniqueGuess(request.matchId(), request.userId(), id);
 
         Palpite palpite = getEntity(id);
         apply(palpite, request);
@@ -62,21 +64,21 @@ public class PalpiteService {
         return toResponse(palpiteRepository.save(palpite));
     }
 
-    public void delete(Long id) {
+    public void delete(UUID id) {
         palpiteRepository.delete(getEntity(id));
     }
 
-    private void validateUniqueGuess(Long groupId, Long matchId, Long userId, Long currentId) {
+    private void validateUniqueGuess(UUID matchId, UUID userId, UUID currentId) {
         boolean exists = currentId == null
-            ? palpiteRepository.existsByGroupIdAndMatchIdAndUserId(groupId, matchId, userId)
-            : palpiteRepository.existsByGroupIdAndMatchIdAndUserIdAndIdNot(groupId, matchId, userId, currentId);
+            ? palpiteRepository.existsByMatchIdAndUserId(matchId, userId)
+            : palpiteRepository.existsByMatchIdAndUserIdAndIdNot(matchId, userId, currentId);
 
         if (exists) {
-            throw new BusinessException("A guess for this user, group and match already exists.");
+            throw new BusinessException("A user can only have one guess per match.");
         }
     }
 
-    private Palpite getEntity(Long id) {
+    private Palpite getEntity(UUID id) {
         return palpiteRepository.findById(id)
             .orElseThrow(() -> new ResourceNotFoundException("Guess not found: " + id));
     }
@@ -86,6 +88,9 @@ public class PalpiteService {
         Partida partida = partidaService.getEntity(request.matchId());
         UserEntity user = userService.getEntity(request.userId());
 
+        if (!partida.getMatchDate().isAfter(LocalDateTime.now())) {
+            throw new BusinessException("Guesses are frozen after the match starts.");
+        }
         if (!grupo.getChampionship().getId().equals(partida.getChampionship().getId())) {
             throw new BusinessException("Guess group and match must belong to the same championship.");
         }
