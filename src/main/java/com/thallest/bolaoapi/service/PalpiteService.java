@@ -37,10 +37,14 @@ public class PalpiteService {
     }
 
     public PalpiteResponse create(PalpiteRequest request) {
-        validateUniqueGuess(request.matchId(), request.userId(), null);
+        throw new UnsupportedOperationException("Use create(UUID, PalpiteRequest)");
+    }
+
+    public PalpiteResponse create(UUID authenticatedUserId, PalpiteRequest request) {
+        validateUniqueGuess(request.matchId(), authenticatedUserId, null);
 
         Palpite palpite = new Palpite();
-        apply(palpite, request);
+        apply(palpite, authenticatedUserId, request);
 
         return toResponse(palpiteRepository.save(palpite));
     }
@@ -56,15 +60,25 @@ public class PalpiteService {
     }
 
     public PalpiteResponse update(UUID id, PalpiteRequest request) {
-        validateUniqueGuess(request.matchId(), request.userId(), id);
+        throw new UnsupportedOperationException("Use update(UUID, UUID, PalpiteRequest)");
+    }
+
+    public PalpiteResponse update(UUID id, UUID authenticatedUserId, PalpiteRequest request) {
+        ensureOwnership(id, authenticatedUserId);
+        validateUniqueGuess(request.matchId(), authenticatedUserId, id);
 
         Palpite palpite = getEntity(id);
-        apply(palpite, request);
+        apply(palpite, authenticatedUserId, request);
 
         return toResponse(palpiteRepository.save(palpite));
     }
 
     public void delete(UUID id) {
+        throw new UnsupportedOperationException("Use delete(UUID, UUID)");
+    }
+
+    public void delete(UUID id, UUID authenticatedUserId) {
+        ensureOwnership(id, authenticatedUserId);
         palpiteRepository.delete(getEntity(id));
     }
 
@@ -83,10 +97,17 @@ public class PalpiteService {
             .orElseThrow(() -> new ResourceNotFoundException("Guess not found: " + id));
     }
 
-    private void apply(Palpite palpite, PalpiteRequest request) {
+    private void ensureOwnership(UUID guessId, UUID authenticatedUserId) {
+        Palpite palpite = getEntity(guessId);
+        if (!palpite.getUser().getId().equals(authenticatedUserId)) {
+            throw new BusinessException("Users can only manage their own guesses.");
+        }
+    }
+
+    private void apply(Palpite palpite, UUID authenticatedUserId, PalpiteRequest request) {
         Grupo grupo = grupoService.getEntity(request.groupId());
         Partida partida = partidaService.getEntity(request.matchId());
-        UserEntity user = userService.getEntity(request.userId());
+        UserEntity user = userService.getEntity(authenticatedUserId);
 
         if (!partida.getMatchDate().isAfter(LocalDateTime.now())) {
             throw new BusinessException("Guesses are frozen after the match starts.");
