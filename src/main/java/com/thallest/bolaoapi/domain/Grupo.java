@@ -16,14 +16,15 @@ import jakarta.persistence.Table;
 import java.time.Instant;
 import java.util.LinkedHashSet;
 import java.util.Set;
+import java.util.UUID;
 
 @Entity
 @Table(name = "groups")
 public class Grupo {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private UUID id;
 
     @Column(nullable = false, length = 140)
     private String name;
@@ -58,11 +59,11 @@ public class Grupo {
         createdAt = Instant.now();
     }
 
-    public Long getId() {
+    public UUID getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(UUID id) {
         this.id = id;
     }
 
