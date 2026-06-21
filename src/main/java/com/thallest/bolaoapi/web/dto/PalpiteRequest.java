@@ -7,7 +7,6 @@ import java.util.UUID;
 public record PalpiteRequest(
     @NotNull UUID groupId,
     @NotNull UUID matchId,
-    @NotNull UUID userId,
     @NotNull @Min(0) Integer homeScoreGuess,
     @NotNull @Min(0) Integer awayScoreGuess
 ) {
