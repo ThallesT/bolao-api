@@ -11,6 +11,7 @@ import com.thallest.bolaoapi.web.exception.ResourceNotFoundException;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -47,11 +48,11 @@ public class GrupoService {
     }
 
     @Transactional(readOnly = true)
-    public GrupoResponse findById(Long id) {
+    public GrupoResponse findById(UUID id) {
         return toResponse(getEntity(id));
     }
 
-    public GrupoResponse update(Long id, GrupoRequest request) {
+    public GrupoResponse update(UUID id, GrupoRequest request) {
         validateUniqueAccessCode(request.accessCode(), id);
 
         Grupo grupo = getEntity(id);
@@ -60,16 +61,16 @@ public class GrupoService {
         return toResponse(grupoRepository.save(grupo));
     }
 
-    public void delete(Long id) {
+    public void delete(UUID id) {
         grupoRepository.delete(getEntity(id));
     }
 
-    public Grupo getEntity(Long id) {
+    public Grupo getEntity(UUID id) {
         return grupoRepository.findById(id)
             .orElseThrow(() -> new ResourceNotFoundException("Group not found: " + id));
     }
 
-    private void validateUniqueAccessCode(String accessCode, Long currentId) {
+    private void validateUniqueAccessCode(String accessCode, UUID currentId) {
         boolean exists = currentId == null
             ? grupoRepository.existsByAccessCodeIgnoreCase(accessCode)
             : grupoRepository.existsByAccessCodeIgnoreCaseAndIdNot(accessCode, currentId);
@@ -84,7 +85,7 @@ public class GrupoService {
         Campeonato campeonato = campeonatoService.getEntity(request.championshipId());
         Set<UserEntity> members = new LinkedHashSet<>();
 
-        for (Long memberId : request.memberIds()) {
+        for (UUID memberId : request.memberIds()) {
             members.add(userService.getEntity(memberId));
         }
 
